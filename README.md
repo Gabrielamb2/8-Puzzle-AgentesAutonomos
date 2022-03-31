@@ -40,5 +40,7 @@ Para gerar os sucessores e analisado a localizacao do espaco vazio, para assim l
  
  ### Heuristica
  A primeira implementacao foi verificando se os numeros estavam na posicao desejada, se nao estivesse aumentava um no valor de h. Porem, essa heuristica nao achava solucao para estados iniciais dificeis.
+ 
  Dessa forma foi implementada a heuristica com a distancia de manhattan. A qual calcula a distancia da posicao atual para a posicao desejada. Assim sendo possivel solucionar os estados iniciasi dificeis.
+ 
   Ja para uma resposta coerente para os problemas impossiveis, foi calculada a inversao (explicada nas seguintes fontes:https://www.youtube.com/watch?v=bhmCmbj9VAg, https://math.stackexchange.com/questions/293527/how-to-check-if-a-8-puzzle-is-solvable)
