@@ -24,7 +24,7 @@ python main.py
 ````
 
 ## Descricao do projeto
-Projeto que gera os passos para chegar no estado final desejado para os estados inicias possiveis. 
+Projeto que gera os passos para chegar no estado final desejado para os estados inicias possiveis, apartir do algoritmo A*.
 
 ### Estados
 Os estados sao representados por:
