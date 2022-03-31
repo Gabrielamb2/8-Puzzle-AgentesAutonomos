@@ -15,6 +15,35 @@ from copy import deepcopy
 def printa_board(board):
     for b in board:
         print(b)
+def printa_caminho(string,board):
+    output=string.split(';')
+    for c in output:
+        for i in range(0,3): #linhas
+            for j in range(0,3): #colunas
+                if(board[i][j] == 0):
+                    if c == ' right ':
+                        board[i][j] = board[i][j+1]
+                        board[i][j+1] = 0
+                        printa_board(board)
+                        print()
+                    if c == ' down ':
+                        board[i][j] = board[i+1][j]
+                        board[i+1][j] = 0
+                        printa_board(board)
+                        print()
+                    if c == ' up ':
+                        board[i][j] = board[i-1][j]
+                        board[i-1][j] = 0
+                        printa_board(board)
+                        print()
+                    if c == ' left ':
+                        board[i][j] = board[i][j-1]
+                        board[i][j-1] = 0
+                        printa_board(board)
+                        print()
+                    else:
+                        pass
+        
 
 class Puzzle(State):
 
@@ -36,38 +65,32 @@ class Puzzle(State):
                         temp[i][j] = temp[i-1][j]
                         temp[i-1][j] = 0
                         sucessores.append(Puzzle(temp,'up'))
-                        printa_board(temp)
-                        print()
                     #move down
                     if(i != 2):
                         temp = deepcopy(self.board)
                         temp[i][j] = temp[i+1][j]
                         temp[i+1][j] = 0
                         sucessores.append(Puzzle(temp,'down'))
-                        printa_board(temp)
-                        print()
                     #move left
                     if(j != 0):
                         temp = deepcopy(self.board)
                         temp[i][j] = temp[i][j-1]
                         temp[i][j-1] = 0
                         sucessores.append(Puzzle(temp,'left'))
-                        printa_board(temp)
-                        print()
                     #move right
                     if(j != 2):
                         temp = deepcopy(self.board)
                         temp[i][j] = temp[i][j+1]
                         temp[i][j+1] = 0
                         sucessores.append(Puzzle(temp,'right'))
-                        printa_board(temp)
-                        print()
         return sucessores
                       
     def is_goal(self):
-        if self.h() == 0:
-            return True
-        return False
+        goal=[[1,2,3],
+              [8,0,4],
+              [7,6,5]
+                ]
+        return self.board == goal
     
     def description(self):
         return "Queens Problem"
@@ -86,10 +109,35 @@ class Puzzle(State):
                 ]
         for i in range(0,3): #linhas
             for j in range(0,3): #colunas
-                if(self.board[i][j] != goal[i][j]):
-                    h+=1
-        
+                num = str(self.board[i][j])
+                for l in range(0,3):
+                    for c in range(0,3):
+                        if(str(goal[l][c]) == num):
+                            distancia = abs(i - l) + abs(j-c)
+                            h += distancia
+
         return h
+
+def inversion(board):
+    contador = 0
+    for i in range(0,3): #linhas
+        for j in range(0,3): #colunas
+            if board[i][j] != 0:
+                valor_atual = board[i][j] 
+                for l in range(0,3): #linhas
+                    for c in range(0,3): #colunas
+                        if(l>i or l==i and c>j):
+                            if(board[l][c] < valor_atual and board[l][c] != 0):
+                                contador+=1
+    print("inversao {0}".format(contador))
+    if(contador % 2 == 1):
+        print("tem solucao")
+        return True
+    else:
+        print("nao tem solucao")
+        return False
+                        
+    
 
    
 
@@ -99,30 +147,44 @@ def main():
             [6,5,4]
             ]
     dificil0 = [[7,8,6],   
-            [2,3,5],
-            [1,4,0]
-            ]
+                [2,3,5],
+                [1,4,0]
+               ]
     dificil1 = [[7,8,6],   
-            [2,3,5],
-            [0,1,4]
-            ]
+                [2,3,5],
+                [0,1,4]
+               ]
     dificil2 = [[8,3,6],   
-            [7,5,4],
-            [2,1,0]
-            ]
-    printa_board(dificil1)
+                [7,5,4],
+                [2,1,0]
+               ]
+    impossivel0 = [[3,4,8],   
+                   [1,2,5],
+                   [7,0,6]
+                  ]
+    impossivel1 = [[5,4,0],   
+                   [6,1,8],
+                   [7,3,2]
+                  ]
+    printa_board(dificil2)
     print()
-    state = Puzzle(board = dificil1, operator ='')
-    algorithm = AEstrela()
-    
-    result = algorithm.search(state)
-    
-    
-    if result != None:
-        print('Achou!')
-        print(result.show_path())
+    solvable = inversion(dificil2)
+    if solvable:
+        state = Puzzle(board = dificil2, operator ='')
+        algorithm = AEstrela()
+        
+        result = algorithm.search(state)
+        
+        
+        if result != None:
+            print('Achou!')
+            caminho = result.show_path()
+            # printa_caminho(caminho,facil)
+            print(result.show_path())
+        else:
+            print('Nao achou solucao')
     else:
-        print('Nao achou solucao')
+        pass
 
 if __name__ == '__main__':
     main()
