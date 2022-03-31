@@ -2,9 +2,7 @@
 
 
 
-## Setup do ambiente para execução
-
-Configurando um ambiente virtual:
+## Configurando um ambiente virtual:
 
 ````bash
 python3 -m virtualenv venv
@@ -13,13 +11,13 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ````
 
-## Executar teste 
+## Executar teste:
 
 ````bash
 pytest test_puzzle.py --capture=tee-sys
 ````
 
-## Executar arquivo
+## Executar arquivo:
 
 ````bash
 python main.py 
