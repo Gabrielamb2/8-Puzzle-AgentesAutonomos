@@ -3,52 +3,65 @@
 # be any number between 4 and 10.
 #
 
-from SearchAlgorithms import SubidaMontanha
-from SearchAlgorithms import SubidaMontanha2
+
+from SearchAlgorithms import AEstrela
 from Graph import State
 from random import randrange
 import numpy as np
 import random
 import time
+from copy import deepcopy
 
-class N_QueensProblem(State):
+def printa_board(board):
+    for b in board:
+        print(b)
 
-    def __init__(self, size, board):
-        self.size = size
+class Puzzle(State):
+
+    def __init__(self, board, operator):
         self.board = board
+        self.operator = operator
 
     def env(self):
         return self.board
     
     def sucessors(self):
         sucessores = []
-        for i in range(0,self.size):
-            for j in range(0,self.size):
-                if(self.board[i][j] == 1):
+        for i in range(0,3): #linhas
+            for j in range(0,3): #colunas
+                if(self.board[i][j] == 0):
                     #move up
-                    if((i - 1) >=0 and self.board[i-1][j] == 0):
-                        temp = self.board.copy()
-                        temp[i][j] = 0
-                        temp[i-1][j] = 1
-                        sucessores.append(N_QueensProblem(self.size, temp))
+                    if(i != 0):
+                        temp = deepcopy(self.board)
+                        temp[i][j] = temp[i-1][j]
+                        temp[i-1][j] = 0
+                        sucessores.append(Puzzle(temp,'up'))
+                        printa_board(temp)
+                        print()
                     #move down
-                    if((i + 1) < self.size and self.board[i+1][j] == 0):
-                        temp = self.board.copy()
-                        temp[i][j] = 0
-                        temp[i+1][j] = 1
-                        sucessores.append(N_QueensProblem(self.size, temp))
+                    if(i != 2):
+                        temp = deepcopy(self.board)
+                        temp[i][j] = temp[i+1][j]
+                        temp[i+1][j] = 0
+                        sucessores.append(Puzzle(temp,'down'))
+                        printa_board(temp)
+                        print()
                     #move left
-                    if((j - 1) >=0 and self.board[i][j-1] == 0):
-                        temp = self.board.copy()
-                        temp[i][j] = 0
-                        temp[i][j-1] = 1
-                        sucessores.append(N_QueensProblem(self.size, temp))
+                    if(j != 0):
+                        temp = deepcopy(self.board)
+                        temp[i][j] = temp[i][j-1]
+                        temp[i][j-1] = 0
+                        sucessores.append(Puzzle(temp,'left'))
+                        printa_board(temp)
+                        print()
                     #move right
-                    if((j + 1) < self.size and self.board[i][j+1] == 0):
-                        temp = self.board.copy()
-                        temp[i][j] = 0
-                        temp[i][j+1] = 1
-                        sucessores.append(N_QueensProblem(self.size, temp))
+                    if(j != 2):
+                        temp = deepcopy(self.board)
+                        temp[i][j] = temp[i][j+1]
+                        temp[i][j+1] = 0
+                        sucessores.append(Puzzle(temp,'right'))
+                        printa_board(temp)
+                        print()
         return sucessores
                       
     def is_goal(self):
@@ -66,68 +79,48 @@ class N_QueensProblem(State):
         pass
     
     def h(self):
-        line_strikes = 0
-        for i in range(0,self.size):
-            temp = sum(self.board[i,:])
-            if temp > 1:
-                line_strikes = line_strikes + temp
+        h= 0
+        goal=[[1,2,3],
+              [8,0,4],
+              [7,6,5]
+                ]
+        for i in range(0,3): #linhas
+            for j in range(0,3): #colunas
+                if(self.board[i][j] != goal[i][j]):
+                    h+=1
         
-        column_strikes = 0
-        for i in range(0,self.size):
-            temp = sum(self.board[:,i])
-            if temp > 1:
-                column_strikes = column_strikes + temp
-        
-        diag_strikes = 0
-        for k in range((self.size-1)*-1, self.size-1):
-            temp = sum(np.diag(self.board, k=k))
-            if temp > 1:
-                diag_strikes = diag_strikes + temp
-        
-        diag_strikes_inv = 0
-        # by Daniel Shimoda
-        inv = self.board[::-1]
-        for k in range((self.size-1)*-1, self.size-1):
-            temp = sum(np.diag(inv, k=k))
-            if temp > 1:
-                diag_strikes_inv = diag_strikes_inv + temp
-        
-        return line_strikes + column_strikes + diag_strikes + diag_strikes_inv
+        return h
 
-    def randomBoard(self):
-        self.board = self.generateBoard()
-        while not self.validBoard():
-            self.board = self.generateBoard()
-
-    def generateBoard(self):
-        board = np.zeros( (self.size,self.size) )
-        for i in range(0,self.size):
-            line = random.randrange(0, self.size)
-            column = random.randrange(0, self.size)
-            board[line,column] = 1
-        return board
-
-    def validBoard(self):
-        if np.sum(self.board) != self.size:
-            return False
-        return True
+   
 
 def main():
-    print('Busca Subida da Montanha')
-    N = int(input("Digite o tamanho do tabuleiro (4-10): "))
-    state = N_QueensProblem(size = N, board = None)
-    state.randomBoard()
-    #algorithm = SubidaMontanha()
-    algorithm = SubidaMontanha2()
-    print("Initial state with h = "+str(state.h()))
-    start = time.time()
+    facil = [[8,1,3],
+            [0,7,2],
+            [6,5,4]
+            ]
+    dificil0 = [[7,8,6],   
+            [2,3,5],
+            [1,4,0]
+            ]
+    dificil1 = [[7,8,6],   
+            [2,3,5],
+            [0,1,4]
+            ]
+    dificil2 = [[8,3,6],   
+            [7,5,4],
+            [2,1,0]
+            ]
+    printa_board(dificil1)
+    print()
+    state = Puzzle(board = dificil1, operator ='')
+    algorithm = AEstrela()
+    
     result = algorithm.search(state)
-    end = time.time()
+    
+    
     if result != None:
-        #print('Achou!')
-        print(result.env())
-        print('Final state with h = '+str(result.h()))
-        print('Duration in seconds = '+str(end-start))
+        print('Achou!')
+        print(result.show_path())
     else:
         print('Nao achou solucao')
 
