@@ -7,9 +7,9 @@
 from SearchAlgorithms import AEstrela
 from Graph import State
 from random import randrange
-import numpy as np
-import random
-import time
+# import numpy as np
+# import random
+# import time
 from copy import deepcopy
 
 def printa_board(board):
